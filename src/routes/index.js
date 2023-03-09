@@ -7,13 +7,8 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 
-
-
 router.use(bd.json());
 router.use(bd.urlencoded({ extended: true }));
-
-
-
 
 // Login route
 router.post('/login', async (req, res) => {
@@ -43,7 +38,6 @@ router.post('/login', async (req, res) => {
       return res.json({ token });
     });
   });
-
 
 
 
