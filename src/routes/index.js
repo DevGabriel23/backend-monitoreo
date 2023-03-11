@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         // Extraer información del cuerpo de la solicitud
-        const { name, email, password } = req.body;
+        const {email, password } = req.body;
 
         const users= await connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
@@ -57,7 +57,7 @@ router.post('/register', async (req, res) => {
         // Si no existe, entonces encriptar la contraseña y guardar el usuario en la base de datos
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = {name,email, password:hashedPassword}
+        const newUser = {email, password:hashedPassword}
         
         await connection.query('INSERT INTO users set ?', [newUser]);
         res.send(req.body);
@@ -68,6 +68,7 @@ router.post('/register', async (req, res) => {
         res.status(500).send('Ocurrió un error');
     }
 });
+
 
 // Ruta para activar la cuenta del usuario después del registro
 router.get('/activate/:token', async (req, res) => {
@@ -177,7 +178,7 @@ router.post('/change_password', async (req, res) => {
   });
 
 
-router.get('/users', async (req, res) => {
+router.get('/get-all', async (req, res) => {
     try {
         const [rows] = await connection.promise().query('SELECT * FROM users');
         res.json(rows);

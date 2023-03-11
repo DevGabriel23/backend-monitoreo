@@ -3,6 +3,6 @@ module.exports = {
         host: 'localhost',
         user: 'root',
         password: 'solis2002',
-        database: 'movil',
+        database: 'monitoreo',
     }
 };
