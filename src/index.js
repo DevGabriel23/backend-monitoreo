@@ -15,7 +15,6 @@ app.use(morgan('dev'));
 //Routes 
 app.use("/api/user", require('./routes/index'));
 app.use("/api/mediciones", require('./routes/mediciones'));
-app.use("/api/datos", require('./routes/datos'));
 
 //Public
 app.use(express.static(path.join(__dirname + 'public')));

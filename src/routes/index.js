@@ -45,11 +45,12 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         // Extraer información del cuerpo de la solicitud
-        const {email, password } = req.body;
+        const {user,nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password} = req.body;
 
         const users= await connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
         console.log(req.body);
+        
         if (users > 0){
           return res.status(400).send('El usuario ya existe');
         }
@@ -57,17 +58,62 @@ router.post('/register', async (req, res) => {
         // Si no existe, entonces encriptar la contraseña y guardar el usuario en la base de datos
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = {email, password:hashedPassword}
+        const newUser = {user,nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,hashedPassword}
         
         await connection.query('INSERT INTO users set ?', [newUser]);
         res.send(req.body);
        
-
     } catch (error) {
         console.log(error);
         res.status(500).send('Ocurrió un error');
     }
 });
+
+
+
+//Obtener datos del usuario por email
+router.get('/getemail/:email', async (req, res) => {
+  try {
+      const { email } = req.params;
+      const user = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
+      res.json(user);
+  } catch (error) {
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
+
+
+//Actualizar datos extras del usuario
+router.put('/update/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email} = req.body;
+      const newUserData = {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email}
+      await connection.query('UPDATE users set ? WHERE id = ?', [newUserData, user]);
+      res.send(req.body);
+  } catch (error) {
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
+
+//Eliminar datos extras del usuario
+router.delete('/delete/:id', async (req, res) => {
+  try {
+      const { user } = req.params;
+      await connection.query('DELETE FROM datos WHERE id = ?', [user]);
+      res.send(req.body);
+  } catch (error) {
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
+
+
+
+
+
 
 
 // Ruta para activar la cuenta del usuario después del registro
