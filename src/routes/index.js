@@ -69,6 +69,43 @@ router.post('/register', async (req, res) => {
     }
 });
 
+//Enviar mensaje de texto al numero de emergencia cuando exista riesgo de epilepsia
+router.post('/send', async (req, res) => {
+  try {
+      // Extraer información del cuerpo de la solicitud
+      var {telefono_emergencia} = req.body;
+      console.log(telefono_emergencia)
+      telefono_emergencia = "+52" + telefono_emergencia;
+      console.log(telefono_emergencia)
+      const accountSid = "ACd4ddf2727db396a6c2475b5b4a919953";
+      const authToken = "7c18d3888aa4155268db288849bdd3d9";
+      const client = require("twilio")(accountSid, authToken);
+      client.messages
+        .create({ body: "Ataque epileptico", from: "+14753383647", to: telefono_emergencia })
+        .then(message => console.log(message.sid));
+      res.send(req.body);
+  } catch (error) {
+
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
+
+//Registrar los ataques epilepticos
+router.post('/ataque', async (req, res) => {
+  try {
+
+      // Extraer información del cuerpo de la solicitud
+      const {user,fecha,ritmo_cardiaco, saturacion_oxigeno, temperatura} = req.body;
+      const newAtaque = {user,fecha,ritmo_cardiaco, saturacion_oxigeno, temperatura}
+      await connection.query('INSERT INTO historial set ?', [newAtaque]);
+      res.send(req.body);
+  } catch (error) {
+
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
 
 
 //Obtener datos del usuario por email
@@ -109,12 +146,6 @@ router.delete('/delete/:id', async (req, res) => {
       res.status(500).send('Ocurrió un error');
   }
 });
-
-
-
-
-
-
 
 // Ruta para activar la cuenta del usuario después del registro
 router.get('/activate/:token', async (req, res) => {
