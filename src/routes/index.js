@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         // Extraer información del cuerpo de la solicitud
-        const {user,nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password} = req.body;
+        var {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password} = req.body;
 
         const users= await connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
@@ -57,8 +57,8 @@ router.post('/register', async (req, res) => {
 
         // Si no existe, entonces encriptar la contraseña y guardar el usuario en la base de datos
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = {user,nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,hashedPassword}
+        var password = await bcrypt.hash(password, 10);
+        const newUser = {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password}
         
         await connection.query('INSERT INTO users set ?', [newUser]);
         res.send(req.body);
