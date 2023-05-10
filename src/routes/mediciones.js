@@ -15,15 +15,15 @@ router.use(bd.urlencoded({ extended: true }));
 
 router.post('/add', async (req, res) => {
     try {
-      const {id_user,saturacion_oxigeno,frecuencia_cardiaca,temperatura} = req.body;
-      fecha = new Date();
-      hora = fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds();
-      const newMedicionData = {id_user,saturacion_oxigeno,frecuencia_cardiaca,temperatura,fecha,hora}
-      await connection.query('INSERT INTO mediciones set ?', [newMedicionData]);
-      res.send(req.body);
+        const {userId,lungRate, heartRate, temperature, type} = req.body;
+        const date = new Date();
+        const time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        const newMedicionData = {userId,lungRate, heartRate, temperature, type, date, time}
+        await connection.query('INSERT INTO mediciones set ?', [newMedicionData]);
+        res.send(req.body);
     }catch (error) {
-      console.log(error);
-      res.status(500).send('Ocurrió un error');
+        console.log(error);
+        res.status(500).send('Ocurrió un error');
     }
 });
   
@@ -40,7 +40,7 @@ router.get('/get', async (req, res) => {
 router.get('/get/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const mediciones = await connection.query('SELECT * FROM mediciones WHERE id_user = ?', [id]);
+        const mediciones = await connection.query('SELECT * FROM mediciones WHERE userId = ?', [id]);
         res.json(mediciones);
     } catch (error) {
         console.log(error);
@@ -51,7 +51,7 @@ router.get('/get/:id', async (req, res) => {
 router.get('/get/:id/:fecha', async (req, res) => {
     try {
         const { id, fecha } = req.params;
-        const mediciones = await connection.query('SELECT * FROM mediciones WHERE id_user = ? AND fecha = ?', [id, fecha]);
+        const mediciones = await connection.query('SELECT * FROM mediciones WHERE userId = ? AND date = ?', [id, fecha]);
         res.json(mediciones);
     } catch (error) {
         console.log(error);
@@ -62,7 +62,7 @@ router.get('/get/:id/:fecha', async (req, res) => {
 router.get('/get/:fecha/:hora', async (req, res) => {
     try {
         const { fecha, hora } = req.params;
-        const mediciones = await connection.query('SELECT * FROM mediciones WHERE fecha = ? AND hora = ?', [fecha, hora]);
+        const mediciones = await connection.query('SELECT * FROM mediciones WHERE date = ? AND time = ?', [fecha, hora]);
         res.json(mediciones);
     } catch (error) {
         console.log(error);
@@ -73,10 +73,10 @@ router.get('/get/:fecha/:hora', async (req, res) => {
 router.post('/update/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const {id_user,saturacion_oxigeno,frecuencia_cardiaca,temperatura} = req.body;
-        fecha = new Date();
-        hora = fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds();
-        const newMedicionData = {id_user,saturacion_oxigeno,frecuencia_cardiaca,temperatura,fecha,hora}
+        const {userId,lungRate, heartRate, temperature, type} = req.body;
+        date = new Date();
+        time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        const newMedicionData = {userId, lungRate, heartRate, temperature, type, date, time}
         await connection.query('UPDATE mediciones set ? WHERE id = ?', [newMedicionData, id]);
         res.send(req.body);
     } catch (error) {

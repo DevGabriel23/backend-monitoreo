@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         // Extraer información del cuerpo de la solicitud
-        var {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password} = req.body;
+        var {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password} = req.body;
 
         const users= await connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
         // Si no existe, entonces encriptar la contraseña y guardar el usuario en la base de datos
         const salt = await bcrypt.genSalt(10);
         var password = await bcrypt.hash(password, 10);
-        const newUser = {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email,password}
+        const newUser = {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password}
         
         await connection.query('INSERT INTO users set ?', [newUser]);
         res.send(req.body);
@@ -91,21 +91,23 @@ router.post('/send', async (req, res) => {
   }
 });
 
-//Registrar los ataques epilepticos
-router.post('/ataque', async (req, res) => {
-  try {
+// //Registrar los ataques epilepticos
+// router.post('/ataque', async (req, res) => {
+//   try {
 
-      // Extraer información del cuerpo de la solicitud
-      const {user,fecha,ritmo_cardiaco, saturacion_oxigeno, temperatura} = req.body;
-      const newAtaque = {user,fecha,ritmo_cardiaco, saturacion_oxigeno, temperatura}
-      await connection.query('INSERT INTO historial set ?', [newAtaque]);
-      res.send(req.body);
-  } catch (error) {
+//       // Extraer información del cuerpo de la solicitud
+//       const {userId,lungRate, heartRate, temperature, type} = req.body;
+//       const date = new Date();
+//       const time = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+//       const newAtaque = {userId,lungRate, heartRate, temperature, type, date, time}
+//       await connection.query('INSERT INTO historial set ?', [newAtaque]);
+//       res.send(req.body);
+//   } catch (error) {
 
-      console.log(error);
-      res.status(500).send('Ocurrió un error');
-  }
-});
+//       console.log(error);
+//       res.status(500).send('Ocurrió un error');
+//   }
+// });
 
 
 //Obtener datos del usuario por email
@@ -125,8 +127,8 @@ router.get('/getemail/:email', async (req, res) => {
 router.put('/update/:id', async (req, res) => {
   try {
       const { id } = req.params;
-      const {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email} = req.body;
-      const newUserData = {nombre,edad,sexo,estatura,peso,fecha_nacimiento,domicilio,telefono_personal,telefono_emergencia,institucion,seguro_social,medico_tratante,email}
+      const {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password} = req.body;
+      const newUserData = {id,name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password}
       await connection.query('UPDATE users set ? WHERE id = ?', [newUserData, user]);
       res.send(req.body);
   } catch (error) {
