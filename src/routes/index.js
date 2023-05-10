@@ -39,6 +39,19 @@ router.post('/login', async (req, res) => {
     });
   });
 
+//Obtener por id
+router.get('/user/:id', async (req, res) => {
+  try {
+      const {id} = req.params;
+      const user = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
+      res.json(user[0]);
+  } catch (error) {
+      console.log(error);
+      res.status(500).send('Ocurrió un error');
+  }
+});
+
+
 
 
 // Ruta para registro de usuario
