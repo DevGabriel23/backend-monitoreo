@@ -1,9 +1,14 @@
+require('dotenv').config();
 const mysql = require('mysql2');
-const {database} = require('./keys');
 const {promisify} = require('util');
 
-
-var connection = mysql.createPool(database);
+let connection = 
+mysql.createPool({
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE
+});
 
 connection.getConnection((err, connection) => {
     if(err){
@@ -21,7 +26,6 @@ connection.getConnection((err, connection) => {
         connection.release();
         console.log('DB is Connected');
     }
-    return;
 });
 
 //Promise

@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 router.get('/user/:id', async (req, res) => {
   try {
       const {id} = req.params;
-      const user = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
+      const user = connection.query('SELECT * FROM users WHERE id = ?', [id]);
       res.json(user[0]);
   } catch (error) {
       console.log(error);
@@ -58,9 +58,9 @@ router.get('/user/:id', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         // Extraer información del cuerpo de la solicitud
-        var {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password} = req.body;
+        let {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password} = req.body;
 
-        const users= await connection.query('SELECT * FROM users WHERE email = ?', [email]);
+        const users= connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
         console.log(req.body);
         
@@ -70,10 +70,10 @@ router.post('/register', async (req, res) => {
 
         // Si no existe, entonces encriptar la contraseña y guardar el usuario en la base de datos
         const salt = await bcrypt.genSalt(10);
-        var password = await bcrypt.hash(password, 10);
-        const newUser = {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password}
+        let new_password = await bcrypt.hash(password, 10);
+        const newUser = {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password: new_password}
         
-        await connection.query('INSERT INTO users set ?', [newUser]);
+        connection.query('INSERT INTO users set ?', [newUser]);
         res.send(req.body);
        
     } catch (error) {
