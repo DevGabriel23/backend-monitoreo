@@ -20,7 +20,6 @@ app.use(morgan('dev'));
 //     next();
 // });
 
-
 //Routes 
 app.use("/api/user", require('./routes/index'));
 app.use("/api/mediciones", require('./routes/mediciones'));
