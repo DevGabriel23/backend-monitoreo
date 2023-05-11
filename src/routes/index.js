@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
 router.get('/user/:id', async (req, res) => {
   try {
       const {id} = req.params;
-      const user = connection.query('SELECT * FROM users WHERE id = ?', [id]);
+      const user = await connection.query('SELECT * FROM users WHERE id = ?', [id]);
       res.json(user[0]);
   } catch (error) {
       console.log(error);
@@ -60,7 +60,7 @@ router.post('/register', async (req, res) => {
         // Extraer información del cuerpo de la solicitud
         let {name,lastname,email,dayBirth,nss,sex,age,height,weight,phone,ePhone,adress,nameMedic,hospital,password} = req.body;
 
-        const users= connection.query('SELECT * FROM users WHERE email = ?', [email]);
+        const users = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
         console.log(users);
         console.log(req.body);
         
